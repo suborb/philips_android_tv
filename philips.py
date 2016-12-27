@@ -20,7 +20,7 @@ def create_signature(secret_key, to_sign):
     sign = HMAC.new(secret_key, to_sign, SHA)
     return b64encode(sign.hexdigest())
 
-def getDeviceSpecJson():
+def getDeviceSpecJson(config):
     device_spec =  { "device_name" : "heliotrope", "device_os" : "Android", "app_name" : "ApplicationName", "type" : "native" }
     device_spec['app_id'] = config['application_id']
     device_spec['id'] = config['device_id']
@@ -31,9 +31,9 @@ def pair(config):
     config['application_id'] = "app.id"
     config['device_id'] = createDeviceId()
     data = { 'scope' :  [ "read", "write", "control"] }
-    data['device']  = getDeviceSpecJson()
+    data['device']  = getDeviceSpecJson(config)
     print("Starting pairing request")
-    r = requests.post("https://" + config['address'] + "1926:/6/pair/request", json=data, verify=False)
+    r = requests.post("https://" + config['address'] + ":1926/6/pair/request", json=data, verify=False)
     response = r.json()
     auth_Timestamp = response["timestamp"]
     config['auth_key'] = response["auth_key"]
@@ -48,15 +48,19 @@ def pair(config):
 
     grant_request = {}
     grant_request['auth'] = auth
-    grant_request['device']  = getDeviceSpecJson()
+    grant_request['device']  = getDeviceSpecJson(config)
 
     print("Attempting to pair")
     r = requests.post("https://" + config['address'] +":1926/6/pair/grant", json=grant_request, verify=False,auth=HTTPDigestAuth(config['device_id'], config['auth_key']))
+    print(r.json())
     print("Username for subsequent calls is: " + config['device_id'])
     print("Password for subsequent calls is: " + config['auth_key'])
 
-def get_Volume(config):
-    r = requests.get("https://" + config['address'] + ":1926/6/audio/volume", verify=False,auth=HTTPDigestAuth(config['device_id'], config['auth_key']))
+def get_command(config):
+    r = requests.get("https://" + config['address'] + ":1926/" + config['path'], verify=False,auth=HTTPDigestAuth(config['device_id'], config['auth_key']))
+    print(r)
+    print(r.url)
+    print(r.text)
     print(r.json())
 
 
@@ -80,7 +84,21 @@ def main():
     config['auth_key'] = args.password
 
     if args.command == "get_volume":
-        get_Volume(config)
+        config['path'] = "6/audio/volume"
+        get_command(config)
+
+    if args.command == "get":
+        # All working commands
+        config['path'] = "6/channeldb/tv"
+        config['path'] = "6/applications"
+        config['path'] = "6/ambilight/mode"
+        config['path'] = "6/ambilight/topology"
+        config['path'] = "6/recordings/list"
+        config['path'] = "6/powerstate"
+        config['path'] = "6/ambilight/currentconfiguration"
+        config['path'] = "6/channeldb/tv/channelLists/all"
+      
+        get_command(config)
 
 
 main()
