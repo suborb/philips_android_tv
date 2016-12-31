@@ -64,6 +64,10 @@ def get_command(config):
     print(r.json())
 
 
+def post_command(config):
+    r = requests.post("https://" + config['address'] + ":1926/" + config['path'], json=config['body'], verify=False,auth=HTTPDigestAuth(config['device_id'], config['auth_key']))
+    print(r)
+
 
 def main():
     config={}
@@ -97,9 +101,19 @@ def main():
         config['path'] = "6/powerstate"
         config['path'] = "6/ambilight/currentconfiguration"
         config['path'] = "6/channeldb/tv/channelLists/all"
+        config['path'] = "6/system/epgsource"
+        config['path'] = "6/system"
+        config['path'] = "6/system/storage"
+        config['path'] = "6/system/timestamp"
+        config['path'] = "6/menuitems/settings/structure"
+        config['path'] = "6/ambilight/cached"
       
         get_command(config)
 
+    if args.command == "standby":
+        config['path'] = "6/input/key"
+        config['body'] = { "key" : "Standby" }
+        post_command(config)
 
 main()
 
