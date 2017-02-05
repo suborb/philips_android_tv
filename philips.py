@@ -75,7 +75,7 @@ def main():
     parser.add_argument("--host", dest='host', help="Host/address of the TV")
     parser.add_argument("--user", dest='user', help="Username")
     parser.add_argument("--pass", dest='password', help="Password")
-    parser.add_argument("command",  help="Command to run")
+    parser.add_argument("command",  help="Command to run (pair/get_volume/get/standby)")
 
     args = parser.parse_args()
 
