@@ -1,3 +1,4 @@
+from __future__ import print_function, unicode_literals
 from base64 import b64encode,b64decode
 from datetime import datetime
 import json
@@ -12,13 +13,17 @@ import argparse
 # Key used for generated the HMAC signature
 secret_key="ZmVay1EQVFOaZhwQ4Kv81ypLAZNczV9sG4KkseXWn1NEk6cXmPKO/MCa9sryslvLCFMnNe4Z4CPXzToowvhHvA=="
 
+# Turn off ssl warnings
+requests.packages.urllib3.disable_warnings()
+
+
 def createDeviceId():
     return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(16))
 
 
 def create_signature(secret_key, to_sign):
     sign = HMAC.new(secret_key, to_sign, SHA)
-    return b64encode(sign.hexdigest())
+    return str(b64encode(sign.hexdigest().encode()))
 
 def getDeviceSpecJson(config):
     device_spec =  { "device_name" : "heliotrope", "device_os" : "Android", "app_name" : "ApplicationName", "type" : "native" }
@@ -44,7 +49,7 @@ def pair(config):
     auth = { "auth_AppId" : "1" }
     auth ['pin'] = str(pin)
     auth['auth_timestamp'] = auth_Timestamp
-    auth['auth_signature'] = create_signature(b64decode(secret_key), str(auth_Timestamp) + str(pin))
+    auth['auth_signature'] = create_signature(b64decode(secret_key), str(auth_Timestamp).encode() + str(pin).encode())
 
     grant_request = {}
     grant_request['auth'] = auth
