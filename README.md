@@ -1,7 +1,7 @@
 # philips_android_tv
 Tools to control Philips 2016 Android TVs
 
-The API is roughly the same as JointSpace (http://jointspace.sourceforge.net/) with the following
+The API is roughly the same as [JointSpace](http://jointspace.sourceforge.net/) with the following
 differences:
 
 * Uses HTTPS over port 1926
@@ -14,3 +14,11 @@ Channel status and changes are performed using a different protocol that isn't d
 
 The tool here will do the initial pairing. The credentials can then be used in a standard way
 (digest) in other tools.
+
+## Getting started
+
+To get started with thie library you can install the requirements with pip using:
+`pip install -r requirements.txt`. After which you can run this script to pair your Philips TV 
+with `python philips.py --host <YOUR_IP_ADDRESS> pair` to receive the credentials for your 
+television. When you have received the correct credentials, you can run the other commands.
+
