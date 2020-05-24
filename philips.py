@@ -80,7 +80,7 @@ def main():
     parser.add_argument("--host", dest='host', help="Host/address of the TV")
     parser.add_argument("--user", dest='user', help="Username")
     parser.add_argument("--pass", dest='password', help="Password")
-    parser.add_argument("command",  help="Command to run (pair/get_volume/get/standby)")
+    parser.add_argument("command",  help="Command to run (pair/get/standby)")
 
     args = parser.parse_args()
 
@@ -88,31 +88,48 @@ def main():
  
     if args.command == "pair":
         pair(config)
+        return
 
     config['device_id'] = args.user
     config['auth_key'] = args.password
 
-    if args.command == "get_volume":
-        config['path'] = "6/audio/volume"
-        get_command(config)
+    # All working commands
 
-    if args.command == "get":
-        # All working commands
-        config['path'] = "6/channeldb/tv"
-        config['path'] = "6/applications"
-        config['path'] = "6/ambilight/mode"
-        config['path'] = "6/ambilight/topology"
-        config['path'] = "6/recordings/list"
-        config['path'] = "6/powerstate"
-        config['path'] = "6/ambilight/currentconfiguration"
-        config['path'] = "6/channeldb/tv/channelLists/all"
-        config['path'] = "6/system/epgsource"
-        config['path'] = "6/system"
-        config['path'] = "6/system/storage"
-        config['path'] = "6/system/timestamp"
-        config['path'] = "6/menuitems/settings/structure"
-        config['path'] = "6/ambilight/cached"
-      
+    if args.command.startswith("get"):
+        if args.command == "get_ambilight_cached":
+            config['path'] = "6/ambilight/cached"
+        elif args.command == "get_ambilight":
+            config['path'] = "6/ambilight/currentconfiguration"
+        elif args.command == "get_ambilight_mode":
+            config['path'] = "6/ambilight/mode"
+        elif args.command == "get_ambilight_topology":
+            config['path'] = "6/ambilight/topology"
+        elif args.command == "get_applications":
+            config['path'] = "6/applications"
+        elif args.command == "get_channeldb_tv":
+            config['path'] = "6/channeldb/tv"
+        elif args.command == "get_channeldb_channellists":
+            config['path'] = "6/channeldb/tv/channelLists/all"
+        elif args.command == "get_menuitems_settings":
+            config['path'] = "6/menuitems/settings/structure"
+        elif args.command == "get_powerstate":
+            config['path'] = "6/powerstate"
+        elif args.command == "get_recordings":
+            config['path'] = "6/recordings/list"
+        elif args.command == "get_system":
+            config['path'] = "6/system"
+        elif args.command == "get_system_epgsource":
+            config['path'] = "6/system/epgsource"
+        elif args.command == "get_system_storage":
+            config['path'] = "6/system/storage"
+        elif args.command == "get_system_timestamp":
+            config['path'] = "6/system/timestamp"
+        elif args.command == "get_volume":
+            config['path'] = "6/audio/volume"
+        else:
+            print("Invalid get command (see source for details)")
+            return
+
         get_command(config)
 
     if args.command == "standby":
@@ -121,7 +138,3 @@ def main():
         post_command(config)
 
 main()
-
-
-
-
